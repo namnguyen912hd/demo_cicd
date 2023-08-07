@@ -8,7 +8,7 @@ namespace democicd.Controllers
     {
         private static readonly string[] Summaries = new[]
         {
-        "nam", "minhphuong", "minhphuong", "minhphuong", "minhphuong", "nam", "nam", "nam", "nam", "Scorching"
+        "nam", "minhphuong", "minhphuong", "minhphuong", "minhphuong", "nam123", "nam", "nam", "nam", "Scorching"
     };
 
         private readonly ILogger<WeatherForecastController> _logger;
