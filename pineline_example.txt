@@ -69,4 +69,75 @@ pipeline{
         
     }
     
+}---- config pineline
+
+pipeline{
+    agent any
+    stages {
+        stage("CloneCode")
+        {
+            steps{
+                //get code
+                git branch: "develop",
+                credentialsId:"jenkins-user-for-nam-artifact-repository",
+                url: "https://github.com/namnguyen912hd/demo_cicd.git"
+            }
+        }
+        
+        stage("restore")
+        {
+            steps{
+                bat "dotnet restore .\\democicd\\democicd\\democicd.csproj"
+            }
+        }
+        
+        stage("clean")
+        {
+            steps{
+                bat "dotnet clean .\\democicd\\democicd\\democicd.csproj"
+            }
+        }
+        
+        stage("build")
+        {
+            steps{
+                bat "dotnet build .\\democicd\\democicd\\democicd.csproj --configuration Release"
+            }
+        }
+        
+        stage("publish")
+        {
+            steps{
+                bat "dotnet publish .\\democicd\\democicd\\democicd.csproj"
+            }
+        }
+        
+        stage("Stop service")
+        {
+            steps{
+                bat "%windir%\\System32\\inetsrv\\appcmd stop site democicd.com.vn"
+                bat "%windir%\\System32\\inetsrv\\appcmd stop apppool /apppool.name:democicd.com.vn"
+                bat "echo waiting until service stopped"
+                bat "ping google.com /n 5"
+            }
+        }
+        
+        stage("Copy to www")
+        {
+            steps{
+                bat "xcopy .\\democicd\\democicd\\bin\\Debug\\net6.0\\publish C:\\www\\demo_ci_cd /e /y /i /r"
+            }
+        }
+        
+        stage("restart service")
+        {
+            steps{
+                bat "%windir%\\System32\\inetsrv\\appcmd start apppool /apppool.name:democicd.com.vn"
+                bat "%windir%\\System32\\inetsrv\\appcmd start site democicd.com.vn"
+            }
+        }
+        
+        
+    }
+    
 }
